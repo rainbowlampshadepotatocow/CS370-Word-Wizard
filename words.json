@@ -1,0 +1,26 @@
+{
+    "easy": [
+        "cat", "dog", "hat", "sun", "cup", "bat", "map", "run",
+        "pen", "book", "tree", "fish", "bird", "car", "star",
+        "shoe", "milk", "door", "bed", "ball", "ring", "key",
+        "leaf", "rock", "sand", "wave", "fire", "snow", "wind",
+        "hill", "road", "cake", "toy", "ship", "train", "clock"
+      ],
+    "medium": [
+        "dragon", "castle", "bridge", "flower", "garden", "planet",
+        "forest", "ocean", "desert", "island", "river", "mountain",
+        "thunder", "shadow", "mirror", "puzzle", "journey", "adventure",
+        "treasure", "lantern", "compass", "rocket", "engine", "signal",
+        "library", "gallery", "market", "village", "harbor",
+        "artist", "builder", "hunter", "explorer", "traveler"
+      ],
+    "hard": [
+        "programming", "byzantine", "labyrinth", "mysterious", "exquisite",
+        "philosophy", "architecture", "metamorphosis", "consciousness",
+        "serendipity", "ephemeral", "ineffable", "paradox", "aesthetic",
+        "transcendence", "juxtaposition", "equilibrium", "resilience",
+        "cryptography", "synchronization", "optimization", "abstraction",
+        "interstellar", "multidimensional", "quantum", "algorithmic",
+        "idiosyncratic", "magnanimous", "perspicacious"
+      ]
+}
