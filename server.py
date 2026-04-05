@@ -4,19 +4,23 @@
 # Environment: Python 3.10 or higher
 # Licence: MIT License
 
+import random
 import socket
 import json
 
 class Game:
     def __init__(self, difficulty="medium"):
+        with open("words.json", "r") as f:
+            word_lists = json.load(f)
+
         self.difficulties = {
-            "easy": {"word": "cat", "max_wrong": 10},
-            "medium": {"word": "dragon", "max_wrong": 6},
-            "hard": {"word": "programming", "max_wrong": 4}
+            "easy":   {"words": word_lists["easy"],   "max_wrong": 10},
+            "medium": {"words": word_lists["medium"], "max_wrong": 6},
+            "hard":   {"words": word_lists["hard"],   "max_wrong": 4}
         }
         
-        # Set difficulty
-        self.word = self.difficulties[difficulty]["word"]
+        # Choose random word from selected difficulty, and set max wrong gueses.
+        self.word = random.choice(self.difficulties[difficulty]["words"])
         self.max_wrong = self.difficulties[difficulty]["max_wrong"]
         
         # Game state
@@ -99,6 +103,7 @@ def main():
     
     # Create game instance with selected difficulty
     game = Game(difficulty)
+    print("[DEBUG] " + game.word)
     
     # Send the initial word display (all underscores) to the client
     conn.send(game.print_word().encode())
