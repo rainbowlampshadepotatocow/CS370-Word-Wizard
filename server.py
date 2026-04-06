@@ -26,6 +26,7 @@ class Game:
         # Game state
         self.current_wrong_guesses = 0
         self.guessed_letters = []
+        self.incorrect_guesses = []
     
     def print_word(self):
         """Create a display string showing guessed letters"""
@@ -43,7 +44,7 @@ class Game:
         """Process a guess and return game status"""
         # Check if the letter has already been guessed
         if guess in self.guessed_letters:
-            return "You already guessed that letter.\n"
+            return "You already guessed that letter.\n", False
         
         # Add new guess to the list of guessed letters
         self.guessed_letters.append(guess)
@@ -54,6 +55,7 @@ class Game:
         else:
             # Incorrect guess - increment wrong guess counter
             self.current_wrong_guesses += 1
+            self.incorrect_guesses.append(guess)
             message = "Wrong!\n"
         
         # Get the current word display showing guessed letters
@@ -64,6 +66,10 @@ class Game:
         
         # Add wrong guesses count to message
         message += "Wrong guesses: " + str(self.current_wrong_guesses) + "/" + str(self.max_wrong)
+        
+        # Add list of incorrect guesses to message
+        if self.incorrect_guesses:
+            message += "\nIncorrect guesses: " + ", ".join(self.incorrect_guesses)
         
         # Check win condition
         if all(letter in self.guessed_letters for letter in self.word):
