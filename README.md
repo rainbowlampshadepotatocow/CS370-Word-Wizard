@@ -1,8 +1,8 @@
-# CS370-Word-Wizard
+# Word Wizard
 
 Authors: Mason King, Zander Look, Sulav Ojha
 
-A client-server implementation of a Hangman-style word guessing game where you play as a wizard battling a dragon. Each correct guess deals damage to the dragon, while incorrect guesses deal damage to your wizard character.
+A client-server implementation of a Hangman-style word guessing game.
 
 ## Overview
 
@@ -10,12 +10,17 @@ A client-server implementation of a Hangman-style word guessing game where you p
 - Three difficulty levels with different word complexities and allowed wrong guesses
 - Real-time game state updates between client and server
 - Modular architecture separating game logic from networking code
+- Word lists stored in a JSON file for easy maintenance
 
 ## Game Mechanics
 
-- **Dragon Health**: Calculated by the number of characters in the target word
-- **Wizard Health**: Based on the number of allowed incorrect guesses (difficulty-dependent)
 - **Gameplay**: Guess letters to reveal the hidden word before running out of wrong guesses
+
+### Difficulty Levels
+
+- **Easy**: 10 wrong guesses allowed with simple words
+- **Medium**: 6 wrong guesses allowed with medium complexity words
+- **Hard**: 4 wrong guesses allowed with complex words
 
 ## Installation & Setup
 
@@ -61,7 +66,8 @@ CS370-Word-Wizard/
 ├── client.py           # Client application with game UI
 ├── LICENSE             # MIT License
 ├── README.md           # This file - project documentation
-└── server.py           # Server application with game logic
+├── server.py           # Server application with game logic
+└── words.json          # Word lists for different difficulty levels
 ```
 
 ### Class Diagram
@@ -69,32 +75,33 @@ CS370-Word-Wizard/
 #### `Game` (in server.py)
 - **Purpose**: Contains core game logic and state management
 - **Methods**:
-  - [`__init__(self, difficulty="medium")`](server.py:10) - Initialize game with selected difficulty
-  - [`print_word(self)`](server.py:26) - Create display string showing guessed letters
-  - [`make_guess(self, guess)`](server.py:38) - Process a letter guess and return game status
+  - [`__init__(self, difficulty="medium")`](server.py:11) - Initialize game with selected difficulty
+  - [`print_word(self)`](server.py:31) - Create display string showing guessed letters
+  - [`make_guess(self, guess)`](server.py:43) - Process a letter guess and return game status
 - **Attributes**:
   - `word`: The target word to guess
   - `max_wrong`: Maximum allowed wrong guesses (difficulty-dependent)
   - `current_wrong_guesses`: Count of incorrect guesses made
   - `guessed_letters`: List of letters already guessed
+  - `incorrect_guesses`: List of incorrect guesses made
 
 #### `GameClient` (in client.py)
 - **Purpose**: Handles client-side networking and user interaction
 - **Methods**:
-  - [`__init__(self)`](client.py:9) - Initialize TCP socket
-  - [`connect_to_server(self)`](client.py:13) - Connect to server at `127.0.0.1:5001`
-  - [`select_difficulty(self)`](client.py:17) - Present difficulty menu and get user choice
-  - [`start_game(self)`](client.py:36) - Main game loop with networking
+  - [`__init__(self)`](client.py:10) - Initialize TCP socket
+  - [`connect_to_server(self)`](client.py:18) - Connect to server at `127.0.0.1:5001`
+  - [`select_difficulty(self)`](client.py:22) - Present difficulty menu and get user choice
+  - [`start_game(self)`](client.py:41) - Main game loop with networking
 - **Attributes**:
   - `client`: TCP socket for server communication
 
 ## Difficulty Levels
 
-| Level   | Word          | Max Wrong Guesses |
+| Level   | Word (example)| Max Wrong Guesses |
 |---------|---------------|-------------------|
-| Easy    | "cat"        | 10                |
-| Medium  | "dragon"     | 6                 |
-| Hard    | "programming"| 4                 |
+| Easy    | "cat"         | 10                |
+| Medium  | "dragon"      | 6                 |
+| Hard    | "programming" | 4                 |
 
 ## Network Protocol
 
@@ -110,6 +117,7 @@ All messages are UTF-8 encoded strings with a maximum size of 1024 bytes.
    - Correct/Wrong feedback
    - Current word display
    - Wrong guesses count
+   - Incorrect guesses list
    - Win/Lose condition if applicable
 
 ### Port Configuration
@@ -125,14 +133,21 @@ All messages are UTF-8 encoded strings with a maximum size of 1024 bytes.
 2. **Modular Difficulty System**: Easy to add new difficulty levels by extending the `difficulties` dictionary
 3. **Error Handling**: Graceful handling of network errors and invalid inputs
 4. **State Management**: Server maintains all game state, client only displays information
+5. **Word Management**: Word lists are stored in a separate JSON file for easy maintenance and updates
 
-### Extensibility Ideas
+### Implementation Details
 
-1. **Word Database**: Replace hardcoded words with a word list file or API
-2. **Additional Difficulties**: Add more levels by extending the `difficulties` dictionary
-3. **Multiplayer Support**: Extend to support multiple clients simultaneously
-4. **Leaderboard**: Implement a scoring system based on time and wrong guesses
-5. **Persistent Storage**: Save game statistics or high scores to a file
+- The game uses a JSON file (`words.json`) to store word lists for different difficulty levels
+- The server manages all game state and sends updates to the client
+- Client handles user input and displays game information
+- Network communication follows a simple request-response pattern
+
+### Implementation Details
+
+- The game uses a JSON file (`words.json`) to store word lists for different difficulty levels
+- The server manages all game state and sends updates to the client
+- Client handles user input and displays game information
+- Network communication follows a simple request-response pattern
 
 ### Testing Recommendations
 
@@ -142,6 +157,7 @@ All messages are UTF-8 encoded strings with a maximum size of 1024 bytes.
    - Non-alphabetic character inputs
    - Network disconnections
 3. Check that win/lose conditions are properly detected
+4. Verify correct handling of single character inputs
 
 ## License
 
@@ -149,6 +165,6 @@ This project is licensed under the MIT License - see the [`LICENSE`](LICENSE) fi
 
 ## Course Information
 
-**Course**: CS 370 - Computer Networks
-**Term**: Spring 2026
+**Course**: CS 370 - Computer Networks  
+**Term**: Spring 2026  
 **Project Type**: Term Project - Client-Server Socket Application
