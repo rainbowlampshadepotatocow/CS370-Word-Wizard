@@ -4,12 +4,17 @@
 # Environment: Python 3.10 or higher
 # Licence: MIT License
 
+import os
 import socket
 
 class GameClient:
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
+    def clear_console(self):
+        """Clear the console for a clean display"""
+        os.system('cls' if os.name == 'nt' else 'clear')
+
     def connect_to_server(self):
         """Connect to the server"""
         self.client.connect(("127.0.0.1", 5001))
@@ -46,34 +51,43 @@ class GameClient:
                 # Send difficulty to server
                 self.client.send(difficulty.encode())
                 
-                # Receive and display initial game state
+                # Clear console and display initial game state
+                self.clear_console()
                 message = self.client.recv(1024).decode()
                 print(message)
                 
                 # Main game loop
                 while True:
-                    # Prompt user for a letter guess
-                    guess = input("Guess a letter: ").lower().strip()
-                    
-                    # Skip empty inputs
-                    if not guess:
-                        continue
-                    
+                   # Prompt user for a letter guess
+                    while True:
+                       guess = input("Guess a letter: ").lower().strip()
+                       
+                       # Skip empty inputs
+                       if not guess:
+                           continue
+                       
+                       # Check if it's a single alphabetic character
+                       if len(guess) == 1 and guess[0].isalpha():
+                           break
+                       else:
+                           print("Please enter a single letter.")
+                           
                     # Send the first character of the guess to the server
                     self.client.send(guess[0].encode())
-                    
-                    # Receive and display the game response from the server
+                   
+                    # Clear console and display the game response from the server
+                    self.clear_console()
                     response = self.client.recv(1024).decode()
-                    print("\n" + response)
-                    
+                    print(response)
+                   
                     # Exit loop if the game is over (win or lose condition met)
                     if "You win!" in response or "You lose!" in response:
-                        break
+                       break
                 
                 play_again = input("\nPlay again? (yes/no): ").lower().strip()
                 self.client.send(play_again.encode())
 
-                if play_again != "yes":
+                if play_again not in ["yes", "y"]:
                     print("Thanks for playing!")
                     break
             
