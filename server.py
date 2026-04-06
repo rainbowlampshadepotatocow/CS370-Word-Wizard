@@ -98,36 +98,41 @@ def main():
     # Print the client address that connected
     print("Connected by", addr)
     
-    # Get difficulty from client
-    difficulty = conn.recv(1024).decode().lower().strip()
-    
-    # Create game instance with selected difficulty
-    game = Game(difficulty)
-    print("[DEBUG] " + game.word)
-    
-    # Send the initial word display (all underscores) to the client
-    conn.send(game.print_word().encode())
-    
-    # Main game loop - continues until win/lose condition is met
     while True:
-        # Receive guess from client (max 1024 bytes), convert to lowercase, and remove whitespace
-        guess = conn.recv(1024).decode().lower().strip()
+        # Get difficulty from client
+        difficulty = conn.recv(1024).decode().lower().strip()
         
-        # If client sends empty message, exit the loop (client disconnected)
-        if not guess:
-            break
+        # Create game instance with selected difficulty
+        game = Game(difficulty)
+        print("[DEBUG] " + game.word)
         
-        # Only use the first character of the input (in case client sends multiple characters)
-        guess = guess[0]
+        # Send the initial word display (all underscores) to the client
+        conn.send(game.print_word().encode())
         
-        # Process the guess
-        message, game_over = game.make_guess(guess)
+        # Main game loop - continues until win/lose condition is met
+        while True:
+            # Receive guess from client (max 1024 bytes), convert to lowercase, and remove whitespace
+            guess = conn.recv(1024).decode().lower().strip()
+            
+            # If client sends empty message, exit the loop (client disconnected)
+            if not guess:
+                break
+            
+            # Only use the first character of the input (in case client sends multiple characters)
+            guess = guess[0]
+            
+            # Process the guess
+            message, game_over = game.make_guess(guess)
+            
+            # Send the game status message to the client
+            conn.send(message.encode())
+            
+            # Exit the game loop if game is over
+            if game_over:
+                break
         
-        # Send the game status message to the client
-        conn.send(message.encode())
-        
-        # Exit the game loop if game is over
-        if game_over:
+        play_again = conn.recv(1024).decode().lower().strip()
+        if play_again != "yes":
             break
     
     # Close the connection with the client
